@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -43,23 +44,48 @@ class UserScren extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Container(
-                    height: 60,
-                    child: ListTile(
-                      contentPadding: EdgeInsets.all(10),
-                        leading:  Icon(Icons.list),
-                        subtitle:  Text(devicesController.dev[index].topics.toString()),
-                        trailing: Container(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(onPressed: ()async{
-                                await devicesController.deleteDevice(devicesController.dev[index].uid);
+                    height: 150,
+                    child: Column(
+                      children: [
+                        ListTile(
+                          contentPadding: EdgeInsets.all(10),
+                            leading:  Icon(Icons.list),
+                            subtitle:   Text(devicesController.dev[index].topics.toString()),
+                            trailing: Container(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(onPressed: ()async{
+                                    await devicesController.deleteDevice(devicesController.dev[index].uid);
 
-                              }, icon: Icon(Icons.delete, color: Colors.red,))
-                            ],
-                          ),
-                        ),
-                        title: Text(devicesController.dev[index].email.toString())),
+                                  }, icon: Icon(Icons.delete, color: Colors.red,))
+                                ],
+                              ),
+                            ),
+                            title: Text(devicesController.dev[index].email.toString())),
+
+                      DropdownSearch<String?>.multiSelection(
+                                  items: devicesController.devces,
+                                  //itemAsString: (d)=> d.topic.toString(),
+                                  popupProps: PopupPropsMultiSelection.menu(
+                                    showSearchBox: true
+                                  ),
+
+                                  onChanged: (it)async{
+                                   //addUserCont.addRemDev(it);
+                                   try{
+                                   await devicesController.changeDevicesOfUser(it, devicesController.dev[index].uid!);
+                                   }
+                                   catch (e){
+                                    Get.snackbar("Device değiştirilemedi.", "Hata");
+                                   }
+                                  },
+                                  selectedItems: devicesController.dev[index].topics ?? [],
+                              ),      
+
+
+                      ],
+                    ),
                         
                         
                   ),
@@ -74,6 +100,8 @@ class UserScren extends StatelessWidget {
 class UsersCt extends GetxController{
   FirestoreService firestoreService = FirestoreService();
   List<UserMod> dev = [];
+  List<Device> devices = [];
+  List<String?> devces = [];
   bool loading = true;
   @override
    onInit()async {
@@ -83,6 +111,10 @@ class UsersCt extends GetxController{
 
   wss()async{
     dev = await firestoreService.getAllUSers() as List<UserMod>;
+    devices = await firestoreService.getDevicesFromDb() as List<Device>;
+    devces = List.generate(devices.length , (index) {
+      return devices[index].topic;
+    } );
     print(dev.toString());
     loading = false;
     update();
@@ -92,6 +124,13 @@ class UsersCt extends GetxController{
     await firestoreService.deleteUser(id);
     wss();
     update();
+  }
+
+  changeDevicesOfUser(List it, String uid)async{
+    await firestoreService.updateDevices(uid, it);
 
   }
 }
+
+
+ 

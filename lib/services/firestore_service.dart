@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:get/get.dart';
 import 'package:mysmartadmin/models/Device.dart';
 import 'package:mysmartadmin/models/UserMod.dart';
 
@@ -66,7 +67,7 @@ class FirestoreService{
     await FirebaseFirestore.instance.collection("users").doc(id).delete();
   }
 
-    addDevice(Map<String, dynamic> deviceinfo)async{
+  addDevice(Map<String, dynamic> deviceinfo)async{
     return await FirebaseFirestore.instance.
     collection("devices")
     .add(deviceinfo).then(
@@ -80,8 +81,27 @@ class FirestoreService{
     );
   }
 
+    updateDevices(id, array)async{
+      try{
+
+      
+    return await FirebaseFirestore.instance.
+    collection("users").doc(id).
+    update(
+      {'topics': array});
+      
+    }
+    catch(e){
+       Get.snackbar("Device değiştirilemedi.", e.toString());
+
+
+    }
+    
+  }
+
+}
+  
+
   
 
 
-
-}
