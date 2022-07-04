@@ -50,7 +50,7 @@ class UserScren extends StatelessWidget {
                         ListTile(
                           contentPadding: EdgeInsets.all(10),
                             leading:  Icon(Icons.list),
-                            subtitle:   Text(devicesController.dev[index].topics.toString()),
+                            //subtitle:   Text(devicesController.dev[index].topics.toString()),
                             trailing: Container(
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -128,6 +128,7 @@ class UsersCt extends GetxController{
 
   changeDevicesOfUser(List it, String uid)async{
     await firestoreService.updateDevices(uid, it);
+    update();
 
   }
 }
