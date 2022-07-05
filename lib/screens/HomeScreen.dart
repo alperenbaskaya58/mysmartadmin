@@ -13,48 +13,51 @@ import 'package:mysmartadmin/services/auth_service.dart';
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: UiConstants.appbar,
-        title: Text("Ana Ekran", style: TextStyle(color: Colors.black87),),
-        actions: [IconButton(onPressed: ()async{
-          AuthService authService = AuthService();
-          await authService.logout();
-          Get.offAll(LoginScreen());
-        }, icon: Icon(Icons.logout))],
-      ),
-
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            //mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-             GestureDetector(
-              onTap: (){
-                Get.to(UserScren());
-              },
-              child: card("Kullanıcılar")),
-
-             GestureDetector(
-              onTap: (){
-                Get.to(DevicesScreen());
-              },
-              child: card("Cihazlar")),
-
-             GestureDetector(
-              onTap: (){
-                Get.to(AddUser());
-              },
-              child: card("Kullanıcı Ekle")),
-             GestureDetector(
-               onTap: (){
-                Get.to(AddDeviceScreen());
-              },
-            
-              child: card("Cihaz Ekle"))
-      
-            ],
+    return WillPopScope(
+      onWillPop: ()async => false,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: UiConstants.appbar,
+          title: Text("Ana Ekran", style: TextStyle(color: Colors.black87),),
+          actions: [IconButton(onPressed: ()async{
+            AuthService authService = AuthService();
+            await authService.logout();
+            Get.offAll(LoginScreen());
+          }, icon: Icon(Icons.logout))],
+        ),
+    
+        body: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              //mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+               GestureDetector(
+                onTap: (){
+                  Get.to(UserScren());
+                },
+                child: card("Kullanıcılar")),
+    
+               GestureDetector(
+                onTap: (){
+                  Get.to(DevicesScreen());
+                },
+                child: card("Cihazlar")),
+    
+               GestureDetector(
+                onTap: (){
+                  Get.to(AddUser());
+                },
+                child: card("Kullanıcı Ekle")),
+               GestureDetector(
+                 onTap: (){
+                  Get.to(AddDeviceScreen());
+                },
+              
+                child: card("Cihaz Ekle"))
+        
+              ],
+            ),
           ),
         ),
       ),
