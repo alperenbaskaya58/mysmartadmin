@@ -52,6 +52,13 @@ class AddDeviceScreen extends StatelessWidget {
                         SizedBox(
                           height: 20,
                         ),
+
+                         TextFieldLog(
+                          passwordcontroller,
+                          "Ad (Name) Ekle",
+                          size,
+                          false,
+                        ),
                      
 
                         SizedBox(
@@ -64,8 +71,8 @@ class AddDeviceScreen extends StatelessWidget {
                           onTap: () async{
                              
                     
-                        if(usercontroller.text.isNotEmpty){
-                          addController.addDevice(usercontroller.text.toString());
+                        if(usercontroller.text.isNotEmpty || passwordcontroller.text.isNotEmpty){
+                          addController.addDevice(usercontroller.text.toString(), passwordcontroller.text.toString());
                         }
                         else{
                           Get.snackbar("Hata", "Alan Boş");  
@@ -127,12 +134,13 @@ class DeviceAddController extends GetxController{
   bool loading = false;
   FirestoreService firestoreService = FirestoreService();
 
-  addDevice(devicename)async{
+  addDevice(devicename, name)async{
     loading = true;
     update();
 
     await firestoreService.addDevice({
-      "topic" : devicename 
+      "topic" : devicename,
+      "name" : name
     });
 
 

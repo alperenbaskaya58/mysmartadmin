@@ -81,18 +81,31 @@ class FirestoreService{
     );
   }
 
-    updateDevices(id, array)async{
+    updateDevices(id, List<Device?> array)async{
+      List asd = [];
+      log(array.toString());
+      if(array.isNotEmpty){
+        for (var ar in array ){
+          Map awr = {
+            "topic" : ar!.topic!,
+            "name" : ar.name,
+          };
+          asd.add(awr);
+        }
+      }
+
       try{
 
       
     return await FirebaseFirestore.instance.
     collection("users").doc(id).
     update(
-      {'topics': array});
+      {'topics': asd});
       
     }
     catch(e){
        Get.snackbar("Device değiştirilemedi.", e.toString());
+       log(e.toString());
 
 
     }

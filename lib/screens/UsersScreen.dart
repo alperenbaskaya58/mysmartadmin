@@ -56,7 +56,7 @@ class UserScren extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   IconButton(onPressed: ()async{
-                                    await devicesController.deleteDevice(devicesController.dev[index].uid);
+                                   // await devicesController.deleteDevice(devicesController.dev[index].uid);
 
                                   }, icon: Icon(Icons.delete, color: Colors.red,))
                                 ],
@@ -64,9 +64,11 @@ class UserScren extends StatelessWidget {
                             ),
                             title: Text(devicesController.dev[index].email.toString())),
 
-                      DropdownSearch<String?>.multiSelection(
-                                  items: devicesController.devces,
-                                  //itemAsString: (d)=> d.topic.toString(),
+
+                      devicesController.devices == null ? CircularProgressIndicator() :
+                      DropdownSearch<Device?>.multiSelection(
+                                  items: devicesController.devices,
+                                  itemAsString: (d)=> d!.topic!.toString(),
                                   popupProps: PopupPropsMultiSelection.menu(
                                     showSearchBox: true
                                   ),
@@ -80,7 +82,7 @@ class UserScren extends StatelessWidget {
                                     Get.snackbar("Device değiştirilemedi.", "Hata");
                                    }
                                   },
-                                  selectedItems: devicesController.dev[index].topics ?? [],
+                                  selectedItems:  devicesController.buildSelectedDevices(index),
                               ),      
 
 
@@ -109,6 +111,35 @@ class UsersCt extends GetxController{
     super.onInit();
   }
 
+  List<Device> buildSelectedDevices (int index){
+    List<Device> another = [];
+    if(dev[index] == null ){
+      log("retunr null");
+      return [];
+    }
+    if(dev[index].topics == null){
+      log("retunr empty topic");
+      return [];
+    }
+
+    List<Topic> topics = dev[index].topics!;
+    for(var devs in topics){
+       int a = devices.indexWhere((Device element) => element.topic == devs.topic);
+       log(a.toString());
+       log(topics.toString());
+       if(a != -1){
+        another.add(devices[a]);
+       }
+    }
+
+    log(another.toString());
+
+    //update();
+
+    return another;
+   
+  }
+
   wss()async{
     dev = await firestoreService.getAllUSers() as List<UserMod>;
     devices = await firestoreService.getDevicesFromDb() as List<Device>;
@@ -120,13 +151,13 @@ class UsersCt extends GetxController{
     update();
   }
 
-  deleteDevice(id)async{
+  /*deleteDevice(id)async{
     await firestoreService.deleteUser(id);
     wss();
     update();
-  }
+  } */
 
-  changeDevicesOfUser(List it, String uid)async{
+  changeDevicesOfUser(List<Device?> it, String uid)async{
     await firestoreService.updateDevices(uid, it);
     update();
 

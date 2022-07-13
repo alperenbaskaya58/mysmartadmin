@@ -181,7 +181,10 @@ class AddUserCont extends GetxController{
    if(usr != null){
     List tpc = [];
       if(selectedItems != []){
-        tpc = List.generate(selectedItems!.length, (index) => selectedItems![index].topic);
+        tpc = List.generate(selectedItems!.length, (index) => {
+          "name": selectedItems![index].name,
+          "topic" : selectedItems![index].topic}
+          );
       }
         
       await firestoreService.addUserToDB(usr.user!.uid, 
